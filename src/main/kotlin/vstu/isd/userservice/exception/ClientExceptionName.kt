@@ -9,4 +9,5 @@ enum class ClientExceptionName(
     INVALID_PASSWORD(803),
     LOGIN_IS_NOT_UNIQUE(804),
     REFRESH_TOKEN_NOT_FOUND(805),
+    REFRESH_TOKEN_EXPIRED(806),
 }
