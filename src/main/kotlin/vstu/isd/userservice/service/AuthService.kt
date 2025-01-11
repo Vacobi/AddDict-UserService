@@ -11,6 +11,7 @@ import vstu.isd.userservice.entity.Token
 import vstu.isd.userservice.entity.isExpired
 import vstu.isd.userservice.entity.isValid
 import vstu.isd.userservice.exception.RefreshTokenIsExpiredException
+import vstu.isd.userservice.exception.RefreshTokenIsInvalidException
 import vstu.isd.userservice.exception.RefreshTokenNonExistsException
 import vstu.isd.userservice.mapper.toUserCredentials
 import vstu.isd.userservice.repository.TokenRepository
@@ -119,7 +120,7 @@ class AuthService(
             val accessToken = getAccessToken(actualUserCredentials)
             RefreshAccessTokenRequestDto(accessToken)
         } else {
-            throw IllegalArgumentException("Refresh token is invalid")
+            throw RefreshTokenIsInvalidException(refreshRequest.refreshedToken)
         }
     }
 
