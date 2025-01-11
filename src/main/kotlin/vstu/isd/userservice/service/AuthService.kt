@@ -10,6 +10,7 @@ import vstu.isd.userservice.entity.TokenStatus
 import vstu.isd.userservice.entity.Token
 import vstu.isd.userservice.entity.isExpired
 import vstu.isd.userservice.entity.isValid
+import vstu.isd.userservice.exception.RefreshTokenIsExpiredException
 import vstu.isd.userservice.exception.RefreshTokenNonExistsException
 import vstu.isd.userservice.mapper.toUserCredentials
 import vstu.isd.userservice.repository.TokenRepository
@@ -107,7 +108,7 @@ class AuthService(
         }
 
         if (refreshToken.isExpired()) {
-            throw IllegalArgumentException("Refresh token is expired")
+            throw RefreshTokenIsExpiredException(refreshRequest.refreshedToken)
         }
 
         val actualUserCredentials = refreshToken.user!!.toUserCredentials()
