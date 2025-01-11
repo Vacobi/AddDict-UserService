@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import vstu.isd.userservice.dto.CreateUserRequestDto
 import vstu.isd.userservice.dto.UserDto
 import vstu.isd.userservice.entity.User
-import vstu.isd.userservice.exception.LoginIsNotUnique
+import vstu.isd.userservice.exception.LoginIsNotUniqueException
 import vstu.isd.userservice.mapper.toDto
 import vstu.isd.userservice.mapper.toEntity
 import vstu.isd.userservice.repository.UserRepository
@@ -35,7 +35,7 @@ class UserService(
             if (
                 (e.cause as? ConstraintViolationException)?.constraintName == "user_login_key"
             ) {
-                throw LoginIsNotUnique(createUserRequest.login)
+                throw LoginIsNotUniqueException(createUserRequest.login)
             }
             throw e
         }.toDto()

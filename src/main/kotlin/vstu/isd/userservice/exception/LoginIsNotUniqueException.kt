@@ -2,7 +2,7 @@ package vstu.isd.userservice.exception
 
 import org.springframework.http.HttpStatus
 
-class LoginIsNotUnique(
+class LoginIsNotUniqueException(
     login: String
 ) : BaseClientException(
     reason = "Login '$login' is not unique.",
