@@ -27,8 +27,8 @@ class AuthController(
         return ResponseEntity.ok(authResponse.accessToken)
     }
 
-    @PatchMapping("/verify-access")
-    fun verifyAccessToken(verifyRequest: VerifyAccessTokenRequestDto): Boolean {
+    @PostMapping("/verify-access")
+    fun verifyAccessToken(@RequestBody verifyRequest: VerifyAccessTokenRequestDto): Boolean {
         return authService.verifyAccessToken(verifyRequest)
     }
 
