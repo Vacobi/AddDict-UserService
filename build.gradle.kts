@@ -1,10 +1,8 @@
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.0.6"
-    id("io.spring.dependency-management") version "1.1.0"
-	kotlin("plugin.lombok") version "2.1.0"
-	id("io.freefair.lombok") version "8.10"
+	id("org.springframework.boot") version "3.0.6"
+	id("io.spring.dependency-management") version "1.1.0"
 }
 
 group = "vstu.isd"
@@ -49,13 +47,9 @@ dependencies {
 	/**
 	 * Utils & Logging
 	 */
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.slf4j:slf4j-api:2.0.5")
 	implementation("ch.qos.logback:logback-classic:1.4.6")
-	implementation("org.projectlombok:lombok:1.18.26")
-	annotationProcessor("org.projectlombok:lombok:1.18.26")
-	implementation("org.mapstruct:mapstruct:1.5.3.Final")
-	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
 
 	/**
 	 * Test containers
@@ -81,11 +75,11 @@ kotlin {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+	useJUnitPlatform()
 }
 
 val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true }
 
 tasks.bootJar {
-    archiveFileName.set("service.jar")
+	archiveFileName.set("service.jar")
 }
