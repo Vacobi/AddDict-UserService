@@ -24,7 +24,7 @@ spring:
       login:
         min-length: 2
         max-length: 32
-        regex: ^[a-zA-Z0-9_]{${spring.user.validation-rule.login.min-length},${spring.user.validation-rule.login.max-length}$
+        regex: ^[a-zA-Z0-9_]{${spring.user.validation-rule.login.min-length},${spring.user.validation-rule.login.max-length}}$
       password:
         min-length: 2
         max-length: 64
