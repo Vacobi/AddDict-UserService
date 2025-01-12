@@ -45,7 +45,7 @@ class TokenService(
 
             val credentialsUpdatedAt = userCredentials.updatedAt.toDate()
 
-            return issuedAt.before(credentialsUpdatedAt) &&
+            return issuedAt.after(credentialsUpdatedAt) &&
                     login == userCredentials.username &&
                     userId == userCredentials.userId
         } catch (e: Exception) {
@@ -58,7 +58,7 @@ class TokenService(
 
     private fun Claims.getLogin(): String? = subject
 
-    private fun Claims.getUserId(): Long? = get("user_id", Long::class.java)
+    private fun Claims.getUserId(): Long? = get("user_id", Integer::class.java)?.toLong()
 
     fun isValidToken(token: String): Boolean {
         return try {
