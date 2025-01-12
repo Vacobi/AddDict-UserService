@@ -14,12 +14,12 @@ class SecurityRequestsConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .cors().and() // Включаем CORS
-            .csrf().disable() // Отключаем CSRF, если не требуется
+            .cors().and()
+            .csrf().disable() // TODO fix it
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers("/api/v1/auth/**").permitAll() // Разрешаем доступ к auth эндпоинтам
-                    .anyRequest().authenticated() // Требуем аутентификацию для всех остальных запросов
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .anyRequest().authenticated()
             }
         return http.build()
     }
