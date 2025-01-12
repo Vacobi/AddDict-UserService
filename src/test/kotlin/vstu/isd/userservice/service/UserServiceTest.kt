@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 class UserServiceTest {
 
     @SpyBean
-    private lateinit var userRepository: UserRepository;
+    private lateinit var userRepository: UserRepository
     @Autowired
     private lateinit var userService: UserService
 
