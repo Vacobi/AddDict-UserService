@@ -15,8 +15,8 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
   jwt:
-    secret: ${JWT_SECRET:awdksiermpddpvmisdmsjdyedjkfqwrtldoeuifbcnbnmdh} // add real secret in env param in producation
-    access-token-expiration: 60m
+    secret: ${JWT_SECRET:awdksiermpddpvmisdmsjdyedjkfqwrtldoeuifbcnbnmdh} # add real secret in env param in prod
+    access-token-expiration: 20m
     refresh-token-expiration: 1d
 
   user:
