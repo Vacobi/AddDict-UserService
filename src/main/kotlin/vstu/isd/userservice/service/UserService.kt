@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import vstu.isd.userservice.dto.CreateUserRequestDto
 import vstu.isd.userservice.dto.UserDto
 import vstu.isd.userservice.entity.User
+import vstu.isd.userservice.exception.LoginIsNotUniqueException
 import vstu.isd.userservice.mapper.toDto
 import vstu.isd.userservice.mapper.toEntity
 import vstu.isd.userservice.repository.UserRepository
@@ -31,10 +32,9 @@ class UserService(
         return try {
             userRepository.save(user)
         } catch (e: DataIntegrityViolationException) {
-            if (
-                (e.cause as? ConstraintViolationException)?.constraintName == "user_login_key"
-            ) {
-                throw IllegalArgumentException("User with login ${createUserRequest.login} already exists")
+            val loginAlreadyExists = (e.cause as? ConstraintViolationException)?.constraintName == "user_login_key"
+            if (loginAlreadyExists) {
+                throw LoginIsNotUniqueException(createUserRequest.login)
             }
             throw e
         }.toDto()
