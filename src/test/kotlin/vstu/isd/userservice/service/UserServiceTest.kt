@@ -21,6 +21,7 @@ import vstu.isd.userservice.repository.UserRepository
 import vstu.isd.userservice.testutils.TestAsserts.Companion.assertUserDtoEquals
 import vstu.isd.userservice.testutils.TestAsserts.Companion.assertUserEquals
 import java.time.LocalDateTime
+import java.util.concurrent.atomic.AtomicInteger
 
 @SpringBootTest
 @ContextConfiguration(initializers = [TestContainersConfig::class])
@@ -34,14 +35,14 @@ class UserServiceTest {
 
     companion object {
         private var login = 10
-        private var password = Integer.MAX_VALUE
+        private var password = AtomicInteger(Int.MAX_VALUE)
 
         fun getNextLogin(): String {
             return login++.toString()
         }
 
         fun getNextPassword(): String {
-            return password--.toString()
+            return password.getAndDecrement().toString()
         }
     }
 
