@@ -32,7 +32,8 @@ class UserService(
         return try {
             userRepository.save(user)
         } catch (e: DataIntegrityViolationException) {
-            val loginAlreadyExists = (e.cause as? ConstraintViolationException)?.constraintName == "user_login_key"
+            val loginAlreadyExists = (e.cause as? ConstraintViolationException)
+                ?.constraintName == "user_login_key"
             if (loginAlreadyExists) {
                 throw LoginIsNotUniqueException(createUserRequest.login)
             }
