@@ -16,10 +16,12 @@ class SecurityRequestsConfig {
         http
             .cors().and()
             .csrf().disable() // TODO fix it
-            .authorizeHttpRequests { requests ->
-                requests
+            .authorizeHttpRequests { authorizeHttpRequests ->
+                authorizeHttpRequests
                     .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
                     .anyRequest().authenticated()
+
             }
         return http.build()
     }

@@ -1,6 +1,7 @@
 package vstu.isd.userservice.controller
 
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import vstu.isd.userservice.dto.CreateUserRequestDto
@@ -11,7 +12,7 @@ import vstu.isd.userservice.service.UserService
 class UserController(
     private val userService: UserService
 ) {
-    @PostMapping
-    fun register(createUserRequestDto: CreateUserRequestDto) =
+    @PostMapping("register")
+    fun register(@RequestBody createUserRequestDto: CreateUserRequestDto) =
         userService.createUser(createUserRequestDto)
 }
