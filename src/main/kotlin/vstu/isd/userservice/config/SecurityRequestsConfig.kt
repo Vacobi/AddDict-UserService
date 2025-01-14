@@ -21,7 +21,6 @@ class SecurityRequestsConfig {
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
                     .anyRequest().authenticated()
-
             }
         return http.build()
     }
