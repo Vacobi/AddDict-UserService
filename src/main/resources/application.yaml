@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/note_db
-    username: user
-    password: pswd
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/note_db}
+    username: ${SPRING_DATASOURCE_USERNAME:user}
+    password: ${SPRING_DATASOURCE_PASSWORD:pswd}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
