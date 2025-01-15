@@ -3,6 +3,7 @@ package vstu.isd.userservice.controller
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ProblemDetail
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.ErrorResponseException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -53,7 +54,7 @@ class GlobalExceptionHandler {
         return mapOf(
             "api_error_code" to baseClientException.exceptionName.apiErrorCode,
             "api_error_name" to baseClientException.exceptionName.name,
-            "properties" to baseClientException.properties()
+            "args" to baseClientException.properties()
         )
     }
 
@@ -65,5 +66,21 @@ class GlobalExceptionHandler {
             problemDetail,
             baseClientException
         )
+    }
+
+    @ExceptionHandler(Exception::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleException(e: Exception): ErrorResponseException {
+        println("Unexpected exception: ${e.message}")
+        return ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, e)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ErrorResponseException {
+        val problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request body")
+        problemDetail.type = URI.create("error")
+        problemDetail.title = "Invalid request"
+        return ErrorResponseException(HttpStatus.BAD_REQUEST, problemDetail, e)
     }
 }
