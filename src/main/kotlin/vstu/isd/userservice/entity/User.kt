@@ -2,7 +2,6 @@ package vstu.isd.userservice.entity
 
 import jakarta.persistence.*
 import org.hibernate.Hibernate
-import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
 @Entity
