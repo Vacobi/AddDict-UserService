@@ -34,7 +34,7 @@ class AuthService(
                 authRequest.login,
                 authRequest.password
             )
-        )
+        ) // TODO check what was throw
 
         val userCredentials: UserCredentials = userCredentialsService.loadUserByUsername(authRequest.login)
 
