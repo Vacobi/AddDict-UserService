@@ -1,6 +1,5 @@
 package vstu.isd.userservice.service
 
-import lombok.extern.slf4j.Slf4j
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
@@ -25,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @SpringBootTest
 @ContextConfiguration(initializers = [TestContainersConfig::class])
-@Slf4j
 class UserServiceTest {
 
     @SpyBean
