@@ -1,4 +1,4 @@
-FROM gradle:8.3-jdk17 AS build
+FROM gradle:8.3-jdk20 AS build
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN gradle build -x test --no-daemon
 
-FROM openjdk:17-jdk-slim
+FROM openjdk:20-jdk-slim
 
 WORKDIR /app
 
