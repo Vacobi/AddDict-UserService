@@ -19,10 +19,8 @@ class TestContainersConfig : ApplicationContextInitializer<ConfigurableApplicati
     override fun initialize(ctx: ConfigurableApplicationContext) {
         postgresContainer.start()
 
-        TestPropertyValues.of(
-            "spring.datasource.url=${postgresContainer.jdbcUrl}",
-            "spring.datasource.username=${postgresContainer.username}",
-            "spring.datasource.password=${postgresContainer.password}"
-        ).applyTo(ctx.environment)
+        System.setProperty("SPRING_DATASOURCE_URL", postgresContainer.jdbcUrl);
+        System.setProperty("SPRING_DATASOURCE_USERNAME", postgresContainer.username);
+        System.setProperty("SPRING_DATASOURCE_PASSWORD", postgresContainer.password);
     }
 }
