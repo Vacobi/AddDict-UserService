@@ -43,16 +43,47 @@ class UserController(
                 )]
             ),
             ApiResponse(
-                responseCode = "403",
+                responseCode = "400",
                 description = """
                             User not created. It may be:  
-                            Note with specified url is not found (api error code 100),  
-                            Note is expired (api error code 101).
+                            Group of validation exceptions (api error code 801),
+                            Validation exception: Login isn't correct (api error code 802),  
+                            Validation exception: Password isn't correct (api error code 803).
                             """,
                 content = [Content(
                     mediaType = "application/json",
                     schema = io.swagger.v3.oas.annotations.media.Schema(
                         example = "No content"
+                    )
+                )]
+            ),
+            ApiResponse(
+                responseCode = "409",
+                description = "User not created. User with same login already exists.",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = io.swagger.v3.oas.annotations.media.Schema(
+                        example = """
+                            {
+                                "type": "error",
+                                "title": "Bad Request",
+                                "status": 400,
+                                "detail": "Group validation failed",
+                                "instance": "/api/v1/user/register",
+                                "date": "2025-01-17T00:29:42.8759012",
+                                "api_error_code": 801,
+                                "api_error_name": "GROUP_VALIDATION_EXCEPTION",
+                                "args": {},
+                                "errors": [
+                                    {
+                                        "api_error_code": 802,
+                                        "api_error_name": "INVALID_LOGIN",
+                                        "args": {},
+                                        "detail": "Login must match rules: ^[a-zA-Z0-9_]{2,32}${'$'}"
+                                    }
+                                ]
+                            }
+                        """
                     )
                 )]
             ),
