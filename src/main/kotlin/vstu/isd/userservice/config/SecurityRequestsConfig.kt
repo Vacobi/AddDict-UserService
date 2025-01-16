@@ -18,7 +18,7 @@ class SecurityRequestsConfig {
             .cors().and()
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v0/api-docs/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
                     .requestMatchers(HttpMethod.PATCH, "api/v1/auth/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "api/v1/auth/verify-access").permitAll()
