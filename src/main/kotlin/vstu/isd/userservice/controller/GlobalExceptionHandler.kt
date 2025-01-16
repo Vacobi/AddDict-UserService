@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.ErrorResponseException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -86,5 +87,14 @@ class GlobalExceptionHandler {
         problemDetail.type = URI.create("error")
         problemDetail.title = "Invalid request"
         return ErrorResponseException(HttpStatus.BAD_REQUEST, problemDetail, e)
+    }
+
+    @ExceptionHandler(AuthenticationException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun handleAuthenticationException(e: AuthenticationException): ErrorResponseException {
+        val problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.message ?: "Bad credentials")
+        problemDetail.type = URI.create("error")
+        problemDetail.title = "Invalid request"
+        return ErrorResponseException(HttpStatus.UNAUTHORIZED, problemDetail, e)
     }
 }
