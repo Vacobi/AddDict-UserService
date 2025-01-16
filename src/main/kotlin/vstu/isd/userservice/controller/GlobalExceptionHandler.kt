@@ -71,14 +71,18 @@ class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleException(e: Exception): ErrorResponseException {
-        println("Unexpected exception: ${e.message}")
-        return ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, e)
+        val problemDetail =
+            ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "Unknown error")
+        println("Unexpected exception: ${e.stackTraceToString()}")
+        problemDetail.type = URI.create("error")
+        problemDetail.title = "Invalid request"
+        return ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR, problemDetail, e)
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ErrorResponseException {
-        val problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request body")
+        val problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message ?: "Unknown error")
         problemDetail.type = URI.create("error")
         problemDetail.title = "Invalid request"
         return ErrorResponseException(HttpStatus.BAD_REQUEST, problemDetail, e)
