@@ -7,7 +7,3 @@ create table if not exists token
     status        varchar(32) not null default 'ACTIVE',
     user_id       bigint      not null references "user" (id)
 );
-
-alter table "user"
-    add column created_at             timestamptz not null default now(),
-    add column credentials_updated_at timestamptz not null default now();
