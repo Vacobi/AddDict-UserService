@@ -4,23 +4,30 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
+import vstu.isd.userservice.config.properties.UserValidationRuleProperties
 import vstu.isd.userservice.dto.CreateUserRequestDto
+import vstu.isd.userservice.dto.FindUserRequestDto
 import vstu.isd.userservice.exception.ClientExceptionName
 import vstu.isd.userservice.exception.ValidationException
 import kotlin.math.max
 
 @SpringBootTest
+@EnableConfigurationProperties(UserValidationRuleProperties::class)
 class UserValidatorTest {
+
+    @Autowired
+    protected lateinit var userValidationRule: UserValidationRuleProperties
 
   @Autowired
   private lateinit var userValidator: UserValidator
 
-    private val loginMinLength: Int = 2
-    private val loginMaxLength: Int = 32
+    private val loginMinLength by lazy { userValidationRule.login.minLength }
+    private val loginMaxLength by lazy { userValidationRule.login.maxLength }
 
-    private val passwordMinLength: Int = 2
-    private val passwordMaxLength: Int = 64
+    private val passwordMinLength by lazy { userValidationRule.password.minLength }
+    private val passwordMaxLength by lazy { userValidationRule.password.maxLength }
 
     fun generateStringOfLength(length: Int): String {
 
@@ -325,4 +332,47 @@ class UserValidatorTest {
         }
     }
 
+    @org.junit.jupiter.api.Nested
+    inner class ValidateFindUserRequestTest {
+        @Test
+        fun `valid find user request`() {
+            val findUserRequest = FindUserRequestDto(null, "abcd123")
+
+            val actualOptionalException = userValidator.validateFindUserRequest(findUserRequest)
+
+            assertThat(actualOptionalException.isEmpty)
+        }
+
+        @Test
+        fun `invalid login`() {
+            val findUserRequest = FindUserRequestDto(null, "a")
+
+            val actualOptionalException = userValidator.validateFindUserRequest(findUserRequest)
+
+            assertThat(actualOptionalException.isPresent)
+            val expectedExceptionsNames = listOf(
+                ClientExceptionName.INVALID_LOGIN
+            )
+            val actualExceptionsNames = actualOptionalException.get().exceptions.stream()
+                .map(ValidationException::exceptionName)
+                .toList()
+            assertEquals(expectedExceptionsNames, actualExceptionsNames)
+        }
+
+        @Test
+        fun `empty request`() {
+            val findUserRequest = FindUserRequestDto(null, null)
+
+            val actualOptionalException = userValidator.validateFindUserRequest(findUserRequest)
+
+            assertThat(actualOptionalException.isPresent)
+            val expectedExceptionsNames = listOf(
+                ClientExceptionName.INVALID_FIND_USER_REQUEST
+            )
+            val actualExceptionsNames = actualOptionalException.get().exceptions.stream()
+                .map(ValidationException::exceptionName)
+                .toList()
+            assertEquals(expectedExceptionsNames, actualExceptionsNames)
+        }
+    }
  }
