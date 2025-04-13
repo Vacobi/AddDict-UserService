@@ -6,16 +6,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.test.context.ContextConfiguration
 import vstu.isd.userservice.config.TestContainersConfig
+import vstu.isd.userservice.config.properties.UserValidationRuleProperties
 import vstu.isd.userservice.dto.CreateUserRequestDto
+import vstu.isd.userservice.dto.FindUserRequestDto
 import vstu.isd.userservice.entity.User
-import vstu.isd.userservice.exception.ClientExceptionName
-import vstu.isd.userservice.exception.GroupValidationException
-import vstu.isd.userservice.exception.LoginIsNotUniqueException
-import vstu.isd.userservice.exception.ValidationException
+import vstu.isd.userservice.exception.*
 import vstu.isd.userservice.repository.UserRepository
 import vstu.isd.userservice.testutils.TestAsserts.Companion.assertUserDtoEquals
 import vstu.isd.userservice.testutils.TestAsserts.Companion.assertUserEquals
@@ -23,8 +23,12 @@ import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 
 @SpringBootTest
+@EnableConfigurationProperties(UserValidationRuleProperties::class)
 @ContextConfiguration(initializers = [TestContainersConfig::class])
 class UserServiceTest {
+
+    @Autowired
+    protected lateinit var userValidationRule: UserValidationRuleProperties
 
     @SpyBean
     private lateinit var userRepository: UserRepository
@@ -41,6 +45,10 @@ class UserServiceTest {
 
         fun getNextPassword(): String {
             return password.getAndDecrement().toString()
+        }
+
+        fun getNextUser(): User {
+            return User(null, getNextLogin(), getNextPassword())
         }
     }
 
@@ -254,4 +262,100 @@ class UserServiceTest {
           assertEquals(expectedExceptionsNames, actualExceptionsNames)
       }
   }
+
+    @org.junit.jupiter.api.Nested
+    inner class GetUserTest {
+
+        private val maxLoginLength by lazy { userValidationRule.login.maxLength }
+
+        private fun addUserToRepository(): User {
+            val user = getNextUser()
+            userRepository.save(user)
+            return user
+        }
+
+        @Test
+        fun `get user by id and login`(){
+            val user = addUserToRepository()
+
+            val findUserRequest = FindUserRequestDto(user.id, user.login)
+            val actualUser = userService.findUser(findUserRequest)
+
+            assertEquals(actualUser, user)
+        }
+
+        @Test
+        fun `get user by id`(){
+            val user = addUserToRepository()
+
+            val findUserRequest = FindUserRequestDto(user.id, null)
+            val actualUser = userService.findUser(findUserRequest)
+
+            assertEquals(actualUser, user)
+        }
+
+        @Test
+        fun `get user by login`(){
+            val user = addUserToRepository()
+
+            val findUserRequest = FindUserRequestDto(null, user.login)
+            val actualUser = userService.findUser(findUserRequest)
+
+            assertEquals(actualUser, user)
+        }
+
+        @Test
+        fun `user with specified id and login not found`(){
+            val user = addUserToRepository()
+
+            val findUserRequest = FindUserRequestDto(user.id?.plus(1), user.login)
+            val actualCreatedUserException = assertThrows<UserNotFoundException> {
+                userService.findUser(findUserRequest)
+            }
+
+            val expectedExceptionsName = ClientExceptionName.USER_NOT_FOUND
+            val actualExceptionsName = actualCreatedUserException.exceptionName
+            assertEquals(expectedExceptionsName, actualExceptionsName)
+        }
+
+        @Test
+        fun `user with specified id not found`(){
+            val findUserRequest = FindUserRequestDto(Long.MAX_VALUE, null)
+            val actualCreatedUserException = assertThrows<UserNotFoundException> {
+                userService.findUser(findUserRequest)
+            }
+
+            val expectedExceptionsName = ClientExceptionName.USER_NOT_FOUND
+            val actualExceptionsName = actualCreatedUserException.exceptionName
+            assertEquals(expectedExceptionsName, actualExceptionsName)
+        }
+
+        @Test
+        fun `user with specified login not found`(){
+            val findUserRequest = FindUserRequestDto(null, "A".repeat(maxLoginLength))
+            val actualCreatedUserException = assertThrows<UserNotFoundException> {
+                userService.findUser(findUserRequest)
+            }
+
+            val expectedExceptionsName = ClientExceptionName.USER_NOT_FOUND
+            val actualExceptionsName = actualCreatedUserException.exceptionName
+            assertEquals(expectedExceptionsName, actualExceptionsName)
+        }
+
+        @Test
+        fun `empty find user request`(){
+            val findUserRequest = FindUserRequestDto(null, null)
+            val actualCreatedUserGroupException = assertThrows<GroupValidationException> {
+                userService.findUser(findUserRequest)
+            }
+
+            val expectedExceptionsNames = listOf(
+                ClientExceptionName.INVALID_FIND_USER_REQUEST
+            )
+            val actualExceptionsNames = actualCreatedUserGroupException.exceptions.stream()
+                .map(ValidationException::exceptionName)
+                .toList()
+            assertEquals(expectedExceptionsNames, actualExceptionsNames)
+        }
+    }
 }
