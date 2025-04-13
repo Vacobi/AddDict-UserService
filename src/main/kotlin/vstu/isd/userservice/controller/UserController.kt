@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import vstu.isd.userservice.dto.CreateUserRequestDto
+import vstu.isd.userservice.dto.FindUserRequestDto
 import vstu.isd.userservice.service.UserService
 
 @RestController
@@ -95,4 +97,71 @@ class UserController(
     @PostMapping("register")
     fun register(@RequestBody createUserRequestDto: CreateUserRequestDto) =
         userService.createUser(createUserRequestDto)
+
+
+
+
+
+    @Operation(
+        summary = "Get user by id and/or login",
+        description = "Allows getting user by id and/or login",
+        parameters = [
+            Parameter(name = "findUserRequest", description = "Object with id and login of user looking for", required = true)
+        ]
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "User found.",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = io.swagger.v3.oas.annotations.media.Schema(
+                        example = """
+                        {
+                            "id": 2,
+                            "login": "some2",
+                            "password": "$\{'$'}2a$\{'$'}10$\HnD8u42Ct/OSvTJOq.lybu8Wrb1uSXnNtL7wDBlGEll7maWLwtFkm",
+                            "createdAt": "2025-04-13T14:52:29.042236",
+                            "credentialsUpdatedAt": "2025-04-13T14:52:29.042236"
+                        }
+                        """
+                    )
+                )]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = """
+                    User wasn't found. It may be:
+                    Invalid login (api error code 802)
+                    Invalid find user request, including empty request (api error code 806)
+                    User was not found (api error code 807)
+                    """,
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = io.swagger.v3.oas.annotations.media.Schema(
+                        example = """
+                            {
+                                "type": "error",
+                                "title": "Not Found",
+                                "status": 404,
+                                "detail": "User with FindUserRequestDto: id=null, login=some5 was not found",
+                                "instance": "/api/v1/user",
+                                "date": "2025-04-13T16:13:50.542995",
+                                "api_error_code": 807,
+                                "api_error_name": "USER_NOT_FOUND",
+                                "args": {}
+                            }
+                        """
+                    )
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500", description = "Internal server error"
+            )
+        ]
+    )
+    @GetMapping
+    fun getUser(@RequestBody findUserRequest: FindUserRequestDto) =
+        userService.findUser(findUserRequest)
 }
