@@ -24,6 +24,7 @@ class SecurityRequestsConfig {
                     .requestMatchers(HttpMethod.POST, "api/v1/auth/verify-access").permitAll()
                     .requestMatchers(HttpMethod.GET, "api/v1/auth/refresh").permitAll()
                     .requestMatchers(HttpMethod.PATCH, "api/v1/auth/logout").permitAll()
+                    .requestMatchers(HttpMethod.GET, "api/v1/user").permitAll()
                 requests.anyRequest().authenticated()
             }
         return http.build()
