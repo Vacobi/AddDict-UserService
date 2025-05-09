@@ -1,7 +1,7 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/changeset/V000.sql
+      file: db/changelog/changeset/V000user.sql
   - include:
-      file: db/changelog/changeset/V001.sql
+      file: db/changelog/changeset/V001user.sql
   - include:
-      file: db/changelog/changeset/V002.sql
+      file: db/changelog/changeset/V002user.sql

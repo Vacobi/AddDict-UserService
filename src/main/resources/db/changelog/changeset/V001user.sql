@@ -6,4 +6,4 @@ create table if not exists token
     expire_at     timestamptz not null,
     status        varchar(32) not null default 'ACTIVE',
     user_id       bigint      not null references "user" (id)
-);
+)
