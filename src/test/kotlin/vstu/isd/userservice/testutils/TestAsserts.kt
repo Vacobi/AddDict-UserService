@@ -3,6 +3,7 @@ package vstu.isd.userservice.testutils
 import junit.framework.TestCase.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
+import vstu.isd.userservice.dto.SubscribeDto
 import vstu.isd.userservice.dto.UserDto
 import vstu.isd.userservice.entity.User
 import java.time.Duration
@@ -37,5 +38,11 @@ class TestAsserts {
             }
         }
 
+        fun assertSubscribeDtoEquals(expected: SubscribeDto, actual: SubscribeDto) {
+
+            assertEquals(expected.id, actual.id)
+            assertEquals(expected.subscriber, actual.subscriber)
+            assertEquals(expected.author, actual.author)
+        }
     }
 }
