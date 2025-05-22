@@ -10,13 +10,9 @@ class Subscribe(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscriber")
-    var subscriber: User? = null,
+    var subscriber: Long? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author")
-    var author: User? = null
+    var author: Long? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
