@@ -6,6 +6,7 @@ import vstu.isd.userservice.dto.FindUserRequestDto
 import vstu.isd.userservice.dto.SubscribeDto
 import vstu.isd.userservice.dto.SubscribeUserRequestDto
 import vstu.isd.userservice.entity.Subscribe
+import vstu.isd.userservice.exception.SubscribeNotExistsException
 import vstu.isd.userservice.exception.SubscribeNotUniqueException
 import vstu.isd.userservice.exception.UserNotFoundException
 import vstu.isd.userservice.mapper.toDto
@@ -39,5 +40,18 @@ class SubscribeService (
         }
 
         return subscribeRepository.save(subscribe).toDto()
+    }
+
+    @Transactional
+    fun unsubscribe(id: Long) : Boolean {
+        val optionalSubscribe = subscribeRepository.findById(id)
+
+        if (optionalSubscribe.isEmpty) {
+            throw SubscribeNotExistsException(id)
+        }
+
+        subscribeRepository.deleteById(id)
+
+        return true
     }
 }
