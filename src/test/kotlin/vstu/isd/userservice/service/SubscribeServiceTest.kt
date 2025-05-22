@@ -29,15 +29,15 @@ class SubscribeServiceTest {
  @SpyBean
  private lateinit var subscribeRepository: SubscribeRepository
 
- @SpyBean
- private lateinit var userRepository: UserRepository
-
  @Autowired
  private lateinit var subscribeService: SubscribeService
 
  companion object {
   private var login = 10
   private var password = AtomicInteger(Int.MAX_VALUE)
+
+  @SpyBean
+  private lateinit var userRepository: UserRepository
 
   fun getNextLogin(): String {
    return login++.toString()
@@ -46,16 +46,16 @@ class SubscribeServiceTest {
   fun getNextPassword(): String {
    return password.getAndDecrement().toString()
   }
- }
-
- @Nested
- inner class CreateSubscribeTest {
 
   private fun addUserToRepository(): User {
    val user = UserServiceTest.getNextUser()
    userRepository.save(user)
    return user
   }
+ }
+
+ @Nested
+ inner class CreateSubscribeTest {
 
   @Test
   fun createSubscribe() {
@@ -113,6 +113,26 @@ class SubscribeServiceTest {
    val subscribesCountInRepoAfterSubscribe = subscribeRepository.count()
 
    assertEquals(subscribesCountInRepoBeforeSubscribe, subscribesCountInRepoAfterSubscribe)
+  }
+ }
+
+ @Nested
+ inner class UnsubscribeTest {
+
+  @Test
+  fun unsubscribe() {
+   val author: User = addUserToRepository()
+   val subscriber: User = addUserToRepository()
+   val expectedUnsubscribed = true
+
+   val subscribeDto = subscribeService.subscribe(SubscribeUserRequestDto(subscriber.id!!, author.id!!))
+
+   val subscribesCountInRepoBeforeSubscribe = subscribeRepository.count()
+   val actualUnsubscribed: Boolean = subscribeService.unsubscribe(subscribeDto.id!!)
+   val subscribesCountInRepoAfterSubscribe = subscribeRepository.count()
+
+   assertEquals(expectedUnsubscribed, actualUnsubscribed)
+   assertEquals(subscribesCountInRepoBeforeSubscribe - 1, subscribesCountInRepoAfterSubscribe)
   }
  }
 }
