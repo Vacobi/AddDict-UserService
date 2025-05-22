@@ -8,4 +8,5 @@ import java.util.*
 public interface SubscribeRepository : JpaRepository<Subscribe, Long>, QueryByExampleExecutor<Subscribe> {
     fun findBySubscriber(subscriber: Long): Optional<Subscribe>
     fun findByAuthor(author: Long): Optional<Subscribe>
+    fun findByAuthorAndSubscriber(author: Long, subscriber: Long): Optional<Subscribe>
 }
