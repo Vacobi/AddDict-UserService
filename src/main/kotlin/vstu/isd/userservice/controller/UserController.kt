@@ -5,13 +5,10 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import vstu.isd.userservice.dto.CreateUserRequestDto
 import vstu.isd.userservice.dto.FindUserRequestDto
+import vstu.isd.userservice.entity.User
 import vstu.isd.userservice.service.UserService
 
 @RestController
@@ -162,6 +159,11 @@ class UserController(
         ]
     )
     @GetMapping
-    fun getUser(@RequestBody findUserRequest: FindUserRequestDto) =
-        userService.findUser(findUserRequest)
+    fun getUser(
+        @RequestParam id: Long?,
+        @RequestParam login: String?
+    ) : User {
+        val findUserRequest = FindUserRequestDto(id, login)
+        return userService.findUser(findUserRequest)
+    }
 }
