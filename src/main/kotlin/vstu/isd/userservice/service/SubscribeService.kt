@@ -54,4 +54,17 @@ class SubscribeService (
 
         return true
     }
+
+    @Transactional
+    fun unsubscribe(subscriberId: Long, authorId: Long) : Boolean {
+        val optionalSubscribe = subscribeRepository.findByAuthorAndSubscriber(authorId, subscriberId)
+
+        if (optionalSubscribe.isEmpty) {
+            throw SubscribeNotExistsException(subscriberId, authorId)
+        }
+
+        subscribeRepository.deleteById(optionalSubscribe.get().id!!)
+
+        return true
+    }
 }
