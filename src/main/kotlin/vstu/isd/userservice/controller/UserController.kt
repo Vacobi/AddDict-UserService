@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.web.bind.annotation.*
 import vstu.isd.userservice.dto.CreateUserRequestDto
 import vstu.isd.userservice.dto.FindUserRequestDto
-import vstu.isd.userservice.entity.User
+import vstu.isd.userservice.dto.UserDto
 import vstu.isd.userservice.service.UserService
 
 @RestController
@@ -21,7 +21,11 @@ class UserController(
         summary = "Register a new user.",
         description = "Allows registering users.",
         parameters = [
-            Parameter(name = "createUserRequestDto", description = "Object with login and password of a new user.", required = true)
+            Parameter(
+                name = "createUserRequestDto",
+                description = "Object with login and password of a new user.",
+                required = true
+            )
         ]
     )
     @ApiResponses(
@@ -96,14 +100,15 @@ class UserController(
         userService.createUser(createUserRequestDto)
 
 
-
-
-
     @Operation(
         summary = "Get user by id and/or login",
         description = "Allows getting user by id and/or login",
         parameters = [
-            Parameter(name = "findUserRequest", description = "Object with id and login of user looking for", required = true)
+            Parameter(
+                name = "findUserRequest",
+                description = "Object with id and login of user looking for",
+                required = true
+            )
         ]
     )
     @ApiResponses(
@@ -162,8 +167,18 @@ class UserController(
     fun getUser(
         @RequestParam id: Long?,
         @RequestParam login: String?
-    ) : User {
+    ): UserDto {
         val findUserRequest = FindUserRequestDto(id, login)
         return userService.findUser(findUserRequest)
     }
+
+    @GetMapping("subscribers")
+    fun getSubscribers(@RequestParam(required = true) userId: Long): List<UserDto> =
+        userService.getUserSubscribers(userId)
+
+    @GetMapping("is-subscriber")
+    fun isSubscriber(
+        @RequestParam(required = true) userId: Long,
+        @RequestParam(required = true) subscriberId: Long
+    ) : Boolean = userService.isSubscriber(userId, subscriberId)
 }

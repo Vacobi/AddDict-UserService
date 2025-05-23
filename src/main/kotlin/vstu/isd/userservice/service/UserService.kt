@@ -15,12 +15,14 @@ import vstu.isd.userservice.exception.LoginIsNotUniqueException
 import vstu.isd.userservice.exception.UserNotFoundException
 import vstu.isd.userservice.mapper.toDto
 import vstu.isd.userservice.mapper.toEntity
+import vstu.isd.userservice.repository.SubscribeRepository
 import vstu.isd.userservice.repository.UserRepository
 import vstu.isd.userservice.validator.UserValidator
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val subscribeRepository: SubscribeRepository,
     private val encoder: PasswordEncoder,
     private val userValidator: UserValidator
 ) {
@@ -45,7 +47,7 @@ class UserService(
         }.toDto()
     }
 
-    fun findUser(findUserRequest: FindUserRequestDto): User {
+    fun findUser(findUserRequest: FindUserRequestDto): UserDto {
 
         userValidator.validateFindUserRequest(findUserRequest).ifPresent { throw it }
 
@@ -55,6 +57,16 @@ class UserService(
             .withIgnorePaths("createdAt", "credentialsUpdatedAt");
         val example = Example.of(probe, matcher)
 
-        return userRepository.findOne(example).orElseThrow{ UserNotFoundException(findUserRequest) }
+        return userRepository.findOne(example)
+            .orElseThrow { UserNotFoundException(findUserRequest) }
+            .toDto()
     }
+
+    fun getUserSubscribers(userId: Long): List<UserDto> = userRepository.findSubscribersByAuthorId(
+        userId
+    ).map { it.toDto() }
+
+    fun isSubscriber(userId: Long, subscriberId: Long): Boolean = subscribeRepository.existsByAuthorAndSubscriber(
+        userId, subscriberId
+    )
 }
