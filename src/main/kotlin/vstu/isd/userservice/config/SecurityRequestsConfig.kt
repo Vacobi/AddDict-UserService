@@ -25,8 +25,10 @@ class SecurityRequestsConfig {
                     .requestMatchers(HttpMethod.GET, "api/v1/auth/refresh").permitAll()
                     .requestMatchers(HttpMethod.PATCH, "api/v1/auth/logout").permitAll()
                     .requestMatchers(HttpMethod.GET, "api/v1/user").permitAll()
-                    .requestMatchers(HttpMethod.GET, "api/v1/user/").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/user/subscribers").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/user/is-subscriber").permitAll()
 
+                    .requestMatchers(HttpMethod.POST, "api/v1/subscribe").permitAll()
                     .requestMatchers(HttpMethod.DELETE, "api/v1/subscribe/unsubscribe").permitAll()
                 requests.anyRequest().authenticated()
             }

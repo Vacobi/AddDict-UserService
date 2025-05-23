@@ -8,10 +8,4 @@ data class JwtProperties(
     val secret: String,
     val accessTokenExpiration: Duration,
     val refreshTokenExpiration: Duration
-) {
-//    val accessTokenDuration: Duration
-//        get() = Duration.parse("PT${accessTokenExpiration.uppercase(Locale.getDefault())}")
-//
-//    val refreshTokenDuration: Duration
-//        get() = Duration.parse("PT${refreshTokenExpiration.uppercase(Locale.getDefault())}")
-}
+)
